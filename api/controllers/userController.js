@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
+const { default: mongoose } = require('mongoose');
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -36,6 +37,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: newUser.id,
       name: newUser.name,
       email: newUser.email,
+      token: generateToken(newUser._id),
     });
   } else {
     res.status(400);
@@ -49,12 +51,13 @@ const loginUser = asyncHandler(async (req, res) => {
   // Check that user email exists
   const user = await User.findOne({ email });
 
-  if (user) {
+  if (user && (await bcrypt.compare(password, user.password))) {
     console.log(email);
     res.status(201).json({
       _id: user.id,
       name: user.name,
       email: user.email,
+      token: generateToken(user._id),
     });
   } else {
     res.status(400);
@@ -63,8 +66,18 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const getUser = asyncHandler(async (req, res) => {
-  res.json({ message: 'Get user details' });
+  let user = await User.findById(req.user._id);
+  const { _id, name, email } = user;
+
+  res.json({ id: _id, name: name, email: email });
 });
+
+// Generate JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '7d',
+  });
+};
 
 module.exports = {
   registerUser,
