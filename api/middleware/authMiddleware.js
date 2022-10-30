@@ -26,10 +26,10 @@ const authGuard = asyncHandler(async (req, res, next) => {
       res.status(401);
       throw new Error('Not authorized. A token is required.');
     }
+  } else {
+    res.status(401);
+    throw new Error('Not authorized. A token is required.');
   }
-
-  // res.status(401);
-  // throw new Error('Not authorized. A token is required.');
 });
 
 module.exports = { authGuard };
