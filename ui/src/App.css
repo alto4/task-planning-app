@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  color: #444;
+
+  text-align: center;
+}
+
+.navbar {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 50px;
+  padding: 2rem;
+}
+
+.nav-links { 
+  display: flex;
+  justify-content: space-evenly;
+  list-style-type: none;
+}
+
+.nav-link {
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: #444;
+}
+
+.form-group {
+  max-width: 500px;
+  margin: auto;
+  padding: .5rem 1rem;
+}
+
+.form-group label {
+  display: block;
+  text-align: left;
+  padding: .7rem 0;
+  font-size: .8rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #AAA;
+}
+
+.btn {
+  padding: .6rem;
+  margin: 1rem 0;
+  width: 100%;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  color: #FFF;
+  background: #333;
+  border: none;
+
+}
+
+.byline {
+  padding: 1rem;
+}
+
+.dashboard {
+
+}
+
+.login {
+
+}
+
+.register {
+
+}
