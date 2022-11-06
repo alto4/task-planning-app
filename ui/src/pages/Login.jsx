@@ -30,7 +30,6 @@ const Login = () => {
   }, [user, isError, isLoading, isSuccess, navigate, dispatch]);
 
   const onChange = (e) => {
-    console.log('ui => ', formData);
     setFormData((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
   };
 
