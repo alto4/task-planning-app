@@ -33,6 +33,31 @@ export const getTasks = createAsyncThunk('tasks/getAll', async (_, thunkAPI) => 
   }
 });
 
+// Delete task
+export const deleteTask = createAsyncThunk('tasks/delete', async (id, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user?.token;
+    return await taskService.deleteTask(id, token);
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
+// Edit task
+export const editTask = createAsyncThunk('tasks/edit', async (taskData, thunkAPI) => {
+  debugger;
+  try {
+    const token = thunkAPI.getState().auth.user?.token;
+    return await taskService.editTask(taskData, token);
+  } catch (error) {
+    const message =
+      (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+    return thunkAPI.rejectWithValue(message);
+  }
+});
+
 export const taskSlice = createSlice({
   name: 'task',
   initialState,
@@ -65,6 +90,36 @@ export const taskSlice = createSlice({
         state.tasks = action.payload.tasks;
       })
       .addCase(getTasks.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Edit task
+      .addCase(editTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(editTask.fulfilled, (state, action) => {
+        debugger;
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.tasks = action.payload;
+      })
+      .addCase(editTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Delete task
+      .addCase(deleteTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        // Filter out deleted task
+        state.tasks = state.tasks.filter((task) => task._id !== action.payload.id);
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

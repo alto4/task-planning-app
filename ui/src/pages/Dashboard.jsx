@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import TaskForm from '../components/TaskForm';
 import Spinner from '../components/layouts/Spinner';
 import { getTasks, reset } from '../features/tasks/taskSlice';
 import TaskItem from '../components/TaskItem';
+import PomodoroTimer from '../components/PomodoroTimer';
 
 const Dashboard = () => {
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [dailyPomodoros, setDailyPomodoros] = useState(0);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -29,6 +33,10 @@ const Dashboard = () => {
     };
   }, [user, navigate, isError, message, dispatch]);
 
+  useEffect(() => {
+    debugger;
+    console.log('daily pomoso updated!');
+  }, [dailyPomodoros]);
   if (isLoading) {
     return <Spinner />;
   }
@@ -40,9 +48,15 @@ const Dashboard = () => {
         <p className='byline'>Productivity Overview</p>
       </section>
 
-      <TaskForm />
+      <PomodoroTimer dailyPomodoros={dailyPomodoros} setDailyPomodoros={setDailyPomodoros} />
 
-      {tasks.length && tasks.map((task) => <TaskItem key={task._id} task={task} />)}
+      <TaskForm selectedTask={selectedTask} setSelectedTask={setSelectedTask} />
+
+      {tasks.length ? (
+        tasks.map((task) => <TaskItem key={task._id} task={task} setSelectedTask={setSelectedTask} />)
+      ) : (
+        <p>There are currently no saved tasks.</p>
+      )}
     </div>
   );
 };

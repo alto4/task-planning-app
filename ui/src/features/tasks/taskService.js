@@ -26,9 +26,36 @@ const getTasks = async (token) => {
   return res.data;
 };
 
+const editTask = async (taskData, token) => {
+  debugger;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const res = await axios.put(API_URL + taskData.id, taskData, config);
+
+  return res.data;
+};
+
+const deleteTask = async (id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const res = await axios.delete(API_URL + id, config);
+
+  return res.data;
+};
+
 const taskService = {
   createTask,
   getTasks,
+  editTask,
+  deleteTask,
 };
 
 export default taskService;

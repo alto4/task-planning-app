@@ -36,31 +36,42 @@ const createTask = asyncHandler(async (req, res) => {
 // PUT - update an existing tasks
 // /api/tasks/:id
 const updateTask = asyncHandler(async (req, res) => {
-  const task = await Task.findById(req.params.id);
+  try {
+    const task = await Task.findById(req.params.id);
+    const allTasks = await Task.find({ user: req.user.id });
 
-  if (!task) {
-    res.status(400);
-    throw new Error('Task not found.');
+    console.log('req,body for update, mark complete => ', req.body);
+    if (!task) {
+      res.status(400);
+      throw new Error('Task not found.');
+    }
+
+    // Check for user
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      res.status(401);
+      throw new Error('User not found.');
+    }
+
+    // Make sure authenticated user matches goal user
+    if (task.user.toString() !== user.id) {
+      res.status(401);
+      throw new Error('User not authorized.');
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    console.log('updatedTask => ', updateTask);
+    console.log('allTasks => ', allTasks);
+    const updatedTasks = allTasks.map((task) =>
+      task._id.toString() === updatedTask?._id.toString() ? updatedTask : task
+    );
+    console.log('updatedTask => ', updatedTask);
+    res.status(200).json(updatedTasks);
+  } catch (error) {
+    console.error('Error updating task => ', error);
   }
-
-  // Check for user
-  const user = await User.findById(req.user.id);
-
-  if (!user) {
-    res.status(401);
-    throw new Error('User not found.');
-  }
-
-  // Make sure authenticated user matches goal user
-  if (task.user.toString() !== user.id) {
-    res.status(401);
-    throw new Error('User not authorized.');
-  }
-
-  const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-
-  console.log('updatedTask => ', updatedTask);
-  res.status(200).json(updatedTask);
 });
 
 // DELETE - delete an existing task

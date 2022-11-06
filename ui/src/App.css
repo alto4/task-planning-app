@@ -19,13 +19,19 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 50px;
-  padding: 2rem;
+  padding: 1.5rem;
+}
+
+.navbar .btn {
+  margin: auto;
 }
 
 .nav-links { 
   display: flex;
   justify-content: space-evenly;
+  align-items: center;
   list-style-type: none;
 }
 
@@ -62,6 +68,7 @@
   cursor: pointer;
   border: none;
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .btn-primary {
@@ -70,6 +77,19 @@
   border: none;
 
 }
+
+.btn-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #DDD;
+  width: 32px;
+  height: 32px;
+  margin: .5rem;
+  border-radius: 100%;
+}
+
+
 
 .byline {
   padding: 1rem;
@@ -89,14 +109,48 @@
 
 .task-item {
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: center;
-  padding: 1rem;
+  padding: 2rem 1rem;
   margin: 1rem auto;
   border: 1px solid #ccc;
   max-width: 450px;
 }
 
 .task-item h2 {
-  margin-bottom: 1rem;
+  max-width: 80%;
+  margin:auto
+}
+
+.task-item-buttons {
+  display: flex;
+  justify-content: center;
+  margin: .5rem;
+}
+
+.task-item-status {
+  position: absolute;
+  top: 2.2rem;
+  right: 2rem;
+  padding: 1rem;
+  height: 22px;
+  width: 22px;
+  background: #333;
+}
+
+input[type=checkbox] { 
+  accent-color: #333;
+  cursor: pointer;
+}
+
+.pomodoro-buttons {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+}
+
+.pomodoro-buttons .btn {
+  max-width: 200px;
+  margin: 1rem .5rem;
 }

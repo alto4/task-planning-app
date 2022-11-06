@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { createTask } from '../features/tasks/taskSlice';
+import { createTask, editTask } from '../features/tasks/taskSlice';
 
-const TaskForm = () => {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: 'general',
-  });
-
-  const { title, description, category } = formData;
+const TaskForm = ({ selectedTask, setSelectedTask }) => {
+  const [formData, setFormData] = useState({ title: '', description: '', category: 'general' });
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (selectedTask) {
+      setFormData({
+        title: selectedTask.title,
+        description: selectedTask.description,
+        category: selectedTask.category,
+      });
+    }
+  }, [selectedTask]);
   const onChange = (e) => {
     console.log('ui => ', formData);
     console.log('e.target', e.target.value);
@@ -20,10 +24,16 @@ const TaskForm = () => {
   };
 
   const onSubmit = (e) => {
+    debugger;
     e.preventDefault();
     console.log('form data to submit => ', formData);
 
-    dispatch(createTask(formData));
+    if (selectedTask) {
+      dispatch(editTask({ ...formData, id: selectedTask?._id }));
+      setSelectedTask(null);
+    } else {
+      dispatch(createTask(formData));
+    }
 
     setFormData({
       title: '',
@@ -37,7 +47,14 @@ const TaskForm = () => {
       <form onSubmit={onSubmit} className='form task-form'>
         <div className='form-group'>
           <label for='title'>Task</label>
-          <input type='text' className='form-control' id='title' name='title' value={title} onChange={onChange} />
+          <input
+            type='text'
+            className='form-control'
+            id='title'
+            name='title'
+            value={formData.title}
+            onChange={onChange}
+          />
         </div>
         <div className='form-group'>
           <label for='description'>Description</label>
@@ -46,7 +63,7 @@ const TaskForm = () => {
             className='form-control'
             id='description'
             name='description'
-            value={description}
+            value={formData.description}
             onChange={onChange}
           />
         </div>
@@ -57,7 +74,7 @@ const TaskForm = () => {
             className='form-control'
             id='category'
             name='category'
-            value={category}
+            value={formData.category}
             onChange={onChange}
             disabled={true}
           >
@@ -68,6 +85,18 @@ const TaskForm = () => {
           <button type='submit' className='btn btn-primary'>
             Submit
           </button>
+          {selectedTask && (
+            <button
+              type='submit'
+              className='btn btn-primary'
+              onClick={(e) => {
+                setSelectedTask(null);
+                setFormData({ title: '', description: '', category: 'general' });
+              }}
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </form>
     </section>

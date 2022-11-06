@@ -7,6 +7,11 @@ const taskSchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
+    completed: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     title: {
       type: String,
       required: [true, 'Please include a task title.'],
