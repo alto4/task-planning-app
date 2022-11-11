@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { createTask, editTask } from '../features/tasks/taskSlice';
 
-const TaskForm = ({ selectedTask, setSelectedTask }) => {
+const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask }) => {
   const [formData, setFormData] = useState({ title: '', description: '', category: 'general' });
 
   const dispatch = useDispatch();
@@ -29,10 +28,10 @@ const TaskForm = ({ selectedTask, setSelectedTask }) => {
     console.log('form data to submit => ', formData);
 
     if (selectedTask) {
-      dispatch(editTask({ ...formData, id: selectedTask?._id }));
+      updateTask.mutate({ ...formData, id: selectedTask?._id });
       setSelectedTask(null);
     } else {
-      dispatch(createTask(formData));
+      createTask.mutate(formData);
     }
 
     setFormData({

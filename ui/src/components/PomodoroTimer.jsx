@@ -2,9 +2,9 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
-const DEFUALT_POMODORO_SECONDS = 0.2 * 60;
+const DEFUALT_POMODORO_SECONDS = 19 * 60;
 
-const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros }) => {
+const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros, handleStoredPomodoros }) => {
   const [mode, setMode] = useState('stopped');
 
   const [timeRemaining, setTimeRemaining] = useState(DEFUALT_POMODORO_SECONDS);
@@ -25,6 +25,7 @@ const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros }) => {
       }, 1000);
       console.log('time remaining => ', timeRemaining);
       if (timeRemaining === 0) {
+        handleStoredPomodoros(dailyPomodoros + 1);
         resetPomodoro();
       }
     } else {

@@ -3,9 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import TaskForm from '../components/TaskForm';
 import Spinner from '../components/layouts/Spinner';
-import { getTasks, reset } from '../features/tasks/taskSlice';
 import TaskItem from '../components/TaskItem';
 import PomodoroTimer from '../components/PomodoroTimer';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { useFetch, API_CONFIG, getConfig } from '../utils/api';
+
+import PomodoroChart from '../components/layouts/PomodoroChart';
 
 const Dashboard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
@@ -15,48 +19,148 @@ const Dashboard = () => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
-  const { tasks, isLoading, isError, message } = useSelector((state) => state.tasks);
+
+  const queryClient = useQueryClient();
+
+  const { data, isLoading: isPomodoroDataLoading } = useFetch(
+    ['pomodoroLogs', dailyPomodoros],
+    'http://localhost:8000/api/pomodoros',
+    {
+      onSuccess: (res) => {
+        let todaysPomodoroRecord = res.data.pomodoros?.find(
+          (p) => p.date.slice(0, 10) === new Date().toISOString().slice(0, 10)
+        );
+        if (todaysPomodoroRecord) {
+          setDailyPomodoros(todaysPomodoroRecord.count);
+        }
+      },
+      enabled: !!user?.token,
+    },
+    user?.token
+  );
+
+  const { data: tasks, isLoading: isTaskDataLoading } = useFetch(
+    ['tasks'],
+    'http://localhost:8000/api/tasks',
+    {
+      onSuccess: (res) => {
+        console.log('taskData res => ', res);
+      },
+      select: (res) => res.data?.tasks,
+      enabled: !!user?.token,
+      default: [],
+    },
+    user?.token
+  );
+
+  const createTask = useMutation(
+    async (taskData) => {
+      let res = await axios.post(`http://localhost:8000/api/tasks/`, taskData, getConfig(user.token));
+      console.log('res => ', res);
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(),
+    }
+  );
+
+  const updateTask = useMutation(
+    async (taskData) => {
+      return await axios.put(`http://localhost:8000/api/tasks/${taskData.id}`, taskData, getConfig(user.token));
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(),
+    }
+  );
+
+  const deleteTask = useMutation(
+    async (id) => {
+      return await axios.delete(`http://localhost:8000/api/tasks/${id}`, getConfig(user.token));
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(),
+    }
+  );
+
+  const updatePomodoroCount = useMutation(async (dailyPomodoros) => {
+    return await axios.put(
+      `http://localhost:8000/api/pomodoros/`,
+      {
+        count: dailyPomodoros,
+        date: new Date().toISOString().slice(0, 10),
+      },
+      getConfig(user.token)
+    );
+  });
+
+  const createPomodoroRecord = useMutation(async (dailyPomodoros) => {
+    return await axios.post(
+      `http://localhost:8000/api/pomodoros/`,
+      {
+        count: dailyPomodoros,
+        date: new Date().toISOString().slice(0, 10),
+      },
+      getConfig(user.token)
+    );
+  });
 
   useEffect(() => {
-    if (isError) {
-      console.log('Error: ', message);
-    }
-
     if (!user) {
       navigate('/login');
     }
+  }, [user, navigate, dispatch]);
 
-    dispatch(getTasks());
-
-    return () => {
-      dispatch(reset());
-    };
-  }, [user, navigate, isError, message, dispatch]);
-
-  useEffect(() => {
+  const handleStoredPomodoros = async (newCount) => {
     debugger;
-    console.log('daily pomoso updated!');
-  }, [dailyPomodoros]);
-  if (isLoading) {
+    if (newCount) {
+      if (newCount === 1) {
+        await createPomodoroRecord.mutate(newCount);
+      } else {
+        await updatePomodoroCount.mutate(newCount);
+      }
+    }
+  };
+
+  if (isTaskDataLoading || isPomodoroDataLoading) {
     return <Spinner />;
   }
 
   return (
     <div className='dashboard'>
-      <section className='overview'>
-        <h1>Welcome {user && user.name}</h1>
-        <p className='byline'>Productivity Overview</p>
-      </section>
+      <div className='dashboard-left'>
+        <h3 className='date'>November 7, 2022</h3>
+        {/* Productivity Chart */}
+        <PomodoroChart chartData={data} />
 
-      <PomodoroTimer dailyPomodoros={dailyPomodoros} setDailyPomodoros={setDailyPomodoros} />
+        {/* Task Form: Convert to Modal */}
+        <TaskForm
+          selectedTask={selectedTask}
+          setSelectedTask={setSelectedTask}
+          createTask={createTask}
+          updateTask={updateTask}
+        />
 
-      <TaskForm selectedTask={selectedTask} setSelectedTask={setSelectedTask} />
-
-      {tasks.length ? (
-        tasks.map((task) => <TaskItem key={task._id} task={task} setSelectedTask={setSelectedTask} />)
-      ) : (
-        <p>There are currently no saved tasks.</p>
-      )}
+        {/* Tasks Overview */}
+        {tasks?.length ? (
+          tasks.map((task) => (
+            <TaskItem
+              key={task._id}
+              task={task}
+              setSelectedTask={setSelectedTask}
+              updateTask={updateTask}
+              deleteTask={deleteTask}
+            />
+          ))
+        ) : (
+          <p>There are currently no saved tasks.</p>
+        )}
+      </div>
+      <div className='dashboard-right'>
+        <PomodoroTimer
+          dailyPomodoros={dailyPomodoros}
+          setDailyPomodoros={setDailyPomodoros}
+          handleStoredPomodoros={handleStoredPomodoros}
+        />
+      </div>
     </div>
   );
 };

@@ -7,7 +7,8 @@ const User = require('../models/userModel');
 // GET - retrieve all pomdoross
 // /api/pomodoros
 const getPomodoros = asyncHandler(async (req, res) => {
-  const pomodoros = await Pomodoro.find({ user: req.user.id });
+  console.log('req.user in getPomodoros => ', req.user);
+  const pomodoros = await Pomodoro.find({ user: req.user._id }).sort('date');
   console.log('all pomdoros for user => ', pomodoros);
 
   res.status(200).json({
@@ -32,7 +33,7 @@ const updatePomodoros = asyncHandler(async (req, res) => {
   try {
     console.log('HERE!');
     const pomodoroRecord = await Pomodoro.find({
-      user: req.user.id,
+      user: req.user._id,
       date: { $gte: new Date(`${req.body.date}T00:00:00.000Z`), $lt: new Date(`${req.body.date}T23:59:00.000Z`) },
     });
 
@@ -44,7 +45,7 @@ const updatePomodoros = asyncHandler(async (req, res) => {
     }
 
     // Check for user
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
 
     console.log('user req => ', user);
     console.log('pomodoroRecord => ', pomodoroRecord);
@@ -60,8 +61,14 @@ const updatePomodoros = asyncHandler(async (req, res) => {
     //   throw new Error('User not authorized.');
     // }
 
-    await Pomodoro.findOneAndUpdate(pomodoroRecord._id, req.body);
-    const updatedPomodoroRecord = await Pomodoro.find({ user: req.user.id, date: req.body.date });
+    await Pomodoro.findOneAndUpdate(
+      {
+        user: req.user._id,
+        date: { $gte: new Date(`${req.body.date}T00:00:00.000Z`), $lt: new Date(`${req.body.date}T23:59:00.000Z`) },
+      },
+      req.body
+    );
+    const updatedPomodoroRecord = await Pomodoro.find({ user: req.user._id, date: req.body.date });
 
     console.log('updated pomodoroRecord => ', updatedPomodoroRecord);
     res.status(200).json(updatedPomodoroRecord);

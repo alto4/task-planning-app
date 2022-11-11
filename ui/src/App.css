@@ -7,12 +7,24 @@
   font-family: 'Montserrat', sans-serif;
 }
 
+body {
+  background: #16151A;
+  color: #FFF;
+}
+
 .container {
   max-width: 1200px;
   margin: auto;
-  color: #444;
-
   text-align: center;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  grid-gap:2rem;
+  margin: auto;
+  border: 1px solid red;
+  padding: 2rem 1.5rem;
 }
 
 .navbar {
@@ -20,8 +32,13 @@
   width: 100%;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 50px;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid red;
+}
+
+.navbar .logo {
+  font-size: 1.6rem;
+  font-weight: 700;
 }
 
 .navbar .btn {
@@ -36,9 +53,15 @@
 }
 
 .nav-link {
-  padding: 1rem 1.5rem;
+  padding: 1rem 0;
   text-decoration: none;
-  color: #444;
+  color: #FFF;
+}
+
+.date {
+  text-align: left;
+  padding-bottom: 2rem;
+  font-size: 1.2rem;
 }
 
 .form-group {
@@ -67,15 +90,17 @@
   width: 100%;
   cursor: pointer;
   border: none;
-  border-radius: 4px;
+  border-radius: .5rem;
   cursor: pointer;
 }
 
 .btn-primary {
-  color: #FFF;
-  background: #333;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111;
+  background: #EEE;
   border: none;
-
+  padding: .5rem 2rem;
 }
 
 .btn-icon {

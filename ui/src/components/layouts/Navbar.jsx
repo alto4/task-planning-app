@@ -25,11 +25,6 @@ const Navbar = () => {
         {user ? (
           <>
             <li>
-              <Link to='/' className='nav-link'>
-                Home
-              </Link>
-            </li>
-            <li>
               <button className='btn btn-primary' onClick={onLogout}>
                 Logout
               </button>
