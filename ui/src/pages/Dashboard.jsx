@@ -14,6 +14,7 @@ import PomodoroChart from '../components/layouts/PomodoroChart';
 const Dashboard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [dailyPomodoros, setDailyPomodoros] = useState(0);
+  const [pomodoroTask, setPomodoroTask] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -27,9 +28,11 @@ const Dashboard = () => {
     'http://localhost:8000/api/pomodoros',
     {
       onSuccess: (res) => {
+        debugger;
         let todaysPomodoroRecord = res.data.pomodoros?.find(
-          (p) => p.date.slice(0, 10) === new Date().toISOString().slice(0, 10)
+          (p) => p.createdAt.slice(0, 10) === new Date().toISOString().slice(0, 10)
         );
+        console.log('todays => ', todaysPomodoroRecord);
         if (todaysPomodoroRecord) {
           setDailyPomodoros(todaysPomodoroRecord.count);
         }
@@ -65,6 +68,8 @@ const Dashboard = () => {
 
   const updateTask = useMutation(
     async (taskData) => {
+      debugger;
+      console.log('taskData => ', taskData);
       return await axios.put(`http://localhost:8000/api/tasks/${taskData.id}`, taskData, getConfig(user.token));
     },
     {
@@ -111,13 +116,28 @@ const Dashboard = () => {
 
   const handleStoredPomodoros = async (newCount) => {
     debugger;
+    console.log('data.pomodoros => ', data.pomodoros);
+    let todaysPomodoroRecord = data.pomodoros?.find(
+      (p) => p?.createdAt?.slice(0, 10) === new Date().toISOString().slice(0, 10)
+    );
+    console.log('todaysPomodoroRecord => ', todaysPomodoroRecord);
+
     if (newCount) {
-      if (newCount === 1) {
-        await createPomodoroRecord.mutate(newCount);
-      } else {
+      if (dailyPomodoros) {
         await updatePomodoroCount.mutate(newCount);
+      } else {
+        await createPomodoroRecord.mutate(newCount);
       }
     }
+  };
+
+  const updateTaskPomodorosCompleted = () => {
+    updateTask.mutate({
+      ...pomodoroTask,
+      id: pomodoroTask?._id,
+      completedPomodoros: pomodoroTask.completedPomodoros ? pomodoroTask.completedPomodoros++ : 1,
+      date: new Date().toISOString(),
+    });
   };
 
   if (isTaskDataLoading || isPomodoroDataLoading) {
@@ -127,38 +147,46 @@ const Dashboard = () => {
   return (
     <div className='dashboard'>
       <div className='dashboard-left'>
-        <h3 className='date'>November 7, 2022</h3>
+        <h3 className='date subheading'>November 7, 2022</h3>
         {/* Productivity Chart */}
         <PomodoroChart chartData={data} />
 
-        {/* Task Form: Convert to Modal */}
-        <TaskForm
-          selectedTask={selectedTask}
-          setSelectedTask={setSelectedTask}
-          createTask={createTask}
-          updateTask={updateTask}
-        />
+        <section className='tasks'>
+          <h2 className='subheading'>Tasks</h2>
+          {/* Task Form: Convert to Modal */}
+          <TaskForm
+            selectedTask={selectedTask}
+            setSelectedTask={setSelectedTask}
+            createTask={createTask}
+            updateTask={updateTask}
+          />
 
-        {/* Tasks Overview */}
-        {tasks?.length ? (
-          tasks.map((task) => (
-            <TaskItem
-              key={task._id}
-              task={task}
-              setSelectedTask={setSelectedTask}
-              updateTask={updateTask}
-              deleteTask={deleteTask}
-            />
-          ))
-        ) : (
-          <p>There are currently no saved tasks.</p>
-        )}
+          {/* Tasks Overview */}
+          {tasks?.length ? (
+            tasks.map((task) => (
+              <TaskItem
+                key={task._id}
+                task={task}
+                setSelectedTask={setSelectedTask}
+                setPomodoroTask={setPomodoroTask}
+                pomodoroTask={pomodoroTask}
+                updateTask={updateTask}
+                deleteTask={deleteTask}
+              />
+            ))
+          ) : (
+            <p>There are currently no saved tasks.</p>
+          )}
+        </section>
       </div>
+
       <div className='dashboard-right'>
         <PomodoroTimer
           dailyPomodoros={dailyPomodoros}
           setDailyPomodoros={setDailyPomodoros}
           handleStoredPomodoros={handleStoredPomodoros}
+          updateTaskPomodorosCompleted={updateTaskPomodorosCompleted}
+          pomodoroTask={pomodoroTask}
         />
       </div>
     </div>

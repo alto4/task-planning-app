@@ -23,7 +23,7 @@ body {
   grid-template-columns: 7fr 3fr;
   grid-gap:2rem;
   margin: auto;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   padding: 2rem 1.5rem;
 }
 
@@ -33,7 +33,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 2rem 1.5rem;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .navbar .logo {
@@ -59,8 +59,11 @@ body {
 }
 
 .date {
-  text-align: left;
-  padding-bottom: 2rem;
+    text-align: left;
+}
+
+.subheading {
+  padding: 1.5rem;
   font-size: 1.2rem;
 }
 
@@ -85,7 +88,9 @@ body {
 }
 
 .btn {
+  color: #444;
   padding: .6rem;
+  font-weight: 700;
   margin: 1rem 0;
   width: 100%;
   cursor: pointer;
@@ -96,8 +101,6 @@ body {
 
 .btn-primary {
   font-size: 1rem;
-  font-weight: 700;
-  color: #111;
   background: #EEE;
   border: none;
   padding: .5rem 2rem;
@@ -132,32 +135,65 @@ body {
 
 }
 
-.task-item {
-  display: flex;
+.tasks {
+  margin: 2rem;
   position: relative;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem 1rem;
-  margin: 1rem auto;
-  border: 1px solid #ccc;
-  max-width: 450px;
 }
 
-.task-item h2 {
+.btn-add-task {
+  position: absolute;
+  font-size: 1.6rem;
+  font-weight: 600;
+  right: 30px;
+  top: 10px;
+}
+
+.task-row {
+  border-top: 1px solid #333;
+}
+
+.task-row {
+  display: grid;
+  grid-template-columns: 4fr 1fr 1fr 2fr 1fr;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  width: 100%;
+  margin: auto;
+}
+
+.task-row .task-cell:first-of-type {
+  border-left: 1px solid #333;
+}
+
+.task-row .task-cell:last-of-type {
+  border-right: 1px solid #333;
+}
+
+.task-cell {
+  min-height: 60px;
+  padding: 2rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-row h3 {
   max-width: 80%;
-  margin:auto
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+
 }
 
 .task-item-buttons {
   display: flex;
   justify-content: center;
-  margin: .5rem;
 }
 
 .task-item-status {
-  position: absolute;
+  /* position: absolute;
   top: 2.2rem;
-  right: 2rem;
+  right: 2rem; */
   padding: 1rem;
   height: 22px;
   width: 22px;
@@ -173,9 +209,23 @@ input[type=checkbox] {
   display: flex;
   margin: auto;
   justify-content: center;
+  max-width: 220px;
 }
 
 .pomodoro-buttons .btn {
-  max-width: 200px;
   margin: 1rem .5rem;
+}
+
+.timer-display {
+  position: relative;
+  border: 10px solid #DDD;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto;
+  font-size: 2.5rem;
+  letter-spacing: 2px;
 }

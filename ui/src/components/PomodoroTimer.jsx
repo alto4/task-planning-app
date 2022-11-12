@@ -2,11 +2,18 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
-const DEFUALT_POMODORO_SECONDS = 19 * 60;
+// Default timer to standard intervals of 25m focus/5m break
+const DEFUALT_POMODORO_SECONDS = 25 * 60;
+const DEFAULT_BREAK_MODE_SECONDS = 5 * 60;
 
-const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros, handleStoredPomodoros }) => {
-  const [mode, setMode] = useState('stopped');
-
+const PomodoroTimer = ({
+  dailyPomodoros,
+  setDailyPomodoros,
+  handleStoredPomodoros,
+  pomodoroTask,
+  updateTaskPomodorosCompleted,
+}) => {
+  const [mode, setMode] = useState('focus');
   const [timeRemaining, setTimeRemaining] = useState(DEFUALT_POMODORO_SECONDS);
 
   const resetPomodoro = () => {
@@ -16,8 +23,16 @@ const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros, handleStoredPomodoro
   };
 
   useEffect(() => {
+    if (!mode === 'break') {
+      setMode('focus');
+    }
+  }, [pomodoroTask, mode]);
+
+  useEffect(() => {
     let id;
-    if (mode === 'focus') {
+    debugger;
+    if (mode === 'focus' || mode === 'break') {
+      debugger;
       id = setInterval(() => {
         if (timeRemaining) {
           setTimeRemaining((prevTime) => prevTime - 1);
@@ -25,8 +40,15 @@ const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros, handleStoredPomodoro
       }, 1000);
       console.log('time remaining => ', timeRemaining);
       if (timeRemaining === 0) {
-        handleStoredPomodoros(dailyPomodoros + 1);
-        resetPomodoro();
+        if (mode === 'focus') {
+          handleStoredPomodoros(dailyPomodoros + 1);
+          pomodoroTask && updateTaskPomodorosCompleted(pomodoroTask);
+          setMode('break');
+          setTimeRemaining(DEFAULT_BREAK_MODE_SECONDS);
+        }
+        if (mode === 'break') {
+          resetPomodoro();
+        }
       }
     } else {
       clearInterval(id);
@@ -36,7 +58,19 @@ const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros, handleStoredPomodoro
 
   return (
     <div>
-      <h1>Pomodoro Timer</h1>
+      <h2 className='subheading'>Pomodoro Timer</h2>
+      <p>{dailyPomodoros} Completed Today</p>
+
+      <span>
+        {/* {timeRemaining && (mode === 'focus' || mode === 'paused') ? ( */}
+        <>
+          <div className='timer-display'>
+            {(timeRemaining / 60).toFixed(2).split('.')[0]}:{timeRemaining % 60 < 10 && '0'}
+            {timeRemaining % 60}
+          </div>
+        </>
+        <span className='subheading'>{timeRemaining && mode === 'focus' ? 'Time to Focus' : 'Break Time'}</span>
+      </span>
       <div className='pomodoro-buttons'>
         {mode === 'focus' ? (
           <button
@@ -69,17 +103,6 @@ const PomodoroTimer = ({ dailyPomodoros, setDailyPomodoros, handleStoredPomodoro
           </button>
         )}
       </div>
-      <span>
-        {timeRemaining && (mode === 'focus' || mode === 'paused') ? (
-          <>
-            {(timeRemaining / 60).toFixed(2).split('.')[0]}:{timeRemaining % 60 < 10 && '0'}
-            {timeRemaining % 60}
-          </>
-        ) : (
-          <>Pomodoro Complete</>
-        )}
-      </span>
-      <p>{dailyPomodoros} Completed Today</p>
     </div>
   );
 };

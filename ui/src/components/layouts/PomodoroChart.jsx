@@ -17,19 +17,34 @@ const PomodoroChart = ({ chartData }) => {
         color: '#EEE',
       },
     },
+    yAxis: {
+      title: {
+        text: 'Pomodoros',
+      },
+    },
     xAxis: {
-      categories: chartData?.data?.pomodoros?.map((d) => d.date.slice(0, 10)) ?? [],
+      title: {
+        text: 'Date',
+      },
+      categories: chartData?.data?.pomodoros?.map((d) => d.createdAt.slice(0, 10)) ?? [],
+    },
+    legend: {
+      enabled: false,
+    },
+    tooltip: {
+      headerFormat: '<b>Daily Record</b><br/>',
+      pointFormat: '{point.y} Pomodoros',
     },
     series: [
       {
         data: chartData?.data?.pomodoros?.map((d) => d.count) ?? [],
-        color: '#6464E1',
-      },
-      {
-        data: chartData?.data?.pomodoros?.map((d) => d.count) ?? [],
         color: '#77C7B8',
+        label: 'Daily ',
       },
     ],
+    credits: {
+      enabled: false,
+    },
   };
   return (
     <div style={{}}>

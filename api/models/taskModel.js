@@ -24,6 +24,16 @@ const taskSchema = mongoose.Schema(
       type: String,
       required: false,
     },
+    estimatedPomodoros: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    completedPomodoros: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
   },
   {
     timestamps: true,

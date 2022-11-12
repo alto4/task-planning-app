@@ -7,10 +7,6 @@ const pomodoroSchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
-    date: {
-      type: mongoose.Schema.Types.Date,
-      default: Date.now(),
-    },
     count: {
       type: mongoose.Schema.Types.Number,
       default: 0,

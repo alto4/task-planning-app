@@ -28,6 +28,8 @@ const createTask = asyncHandler(async (req, res) => {
     title: req.body.title,
     description: req.body.description,
     category: req.body.category,
+    estimatedPomodoros: req.body.estimatedPomodoros,
+    completedPomodoros: req.body.completedPomodoros,
   });
 
   res.status(200).json(task);
