@@ -24,7 +24,7 @@ body {
   grid-gap:2rem;
   margin: auto;
   /* border: 1px solid red; */
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem .5rem;
 }
 
 .navbar {
@@ -62,8 +62,20 @@ body {
     text-align: left;
 }
 
+.tag {
+  font-size: .6rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: .3rem;
+  margin: .3rem 0;
+  background: #333;
+  color: #FFF;
+  border-radius: .4rem;
+}
+
 .subheading {
-  padding: 1.5rem;
+  padding: 1.5rem 0;
   font-size: 1.2rem;
 }
 
@@ -111,8 +123,8 @@ body {
   justify-content: center;
   align-items: center;
   background: #DDD;
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   margin: .5rem;
   border-radius: 100%;
 }
@@ -136,8 +148,13 @@ body {
 }
 
 .tasks {
-  margin: 2rem;
+  margin: 2rem 0 2rem ;
   position: relative;
+  padding: 2rem; 
+}
+
+.tasks-table {
+  margin-left: -2rem;
 }
 
 .btn-add-task {
@@ -148,41 +165,53 @@ body {
   top: 10px;
 }
 
-.task-row {
-  border-top: 1px solid #333;
+.table-heading {
+  font-size: .7rem;
+  
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .task-row {
   display: grid;
-  grid-template-columns: 4fr 1fr 1fr 2fr 1fr;
+  grid-template-columns: 1fr 4fr 1fr 2fr 1fr 1fr;
   align-items: center;
-  border-bottom: 1px solid #333;
   width: 100%;
   margin: auto;
+  padding: .7rem 0;
 }
 
-.task-row .task-cell:first-of-type {
-  border-left: 1px solid #333;
+.table-header {
+  padding: 0;
 }
 
-.task-row .task-cell:last-of-type {
-  border-right: 1px solid #333;
-}
 
 .task-cell {
   min-height: 60px;
   padding: 2rem auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  text-align: left;
+  color: #DDD;
 }
 
-.task-row h3 {
+.task-row .task-main {
   max-width: 80%;
   font-size: 1rem;
   font-weight: 500;
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
+.task-title {
+  padding: 1rem 0 .3rem;
+  color: #FFF;
+}
+
+.task-description {
+  font-size: .75rem;;
 }
 
 .task-item-buttons {
@@ -191,13 +220,20 @@ body {
 }
 
 .task-item-status {
-  /* position: absolute;
-  top: 2.2rem;
-  right: 2rem; */
   padding: 1rem;
-  height: 22px;
-  width: 22px;
+  height: 16px;
+  width: 16px;
   background: #333;
+}
+
+.text-center {
+  text-align: center;
+  width: 100%;
+  font-weight: 600;
+}
+
+.text-left {
+  text-align: left;
 }
 
 input[type=checkbox] { 

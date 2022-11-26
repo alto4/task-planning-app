@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 // Default timer to standard intervals of 25m focus/5m break
-const DEFUALT_POMODORO_SECONDS = 25 * 60;
-const DEFAULT_BREAK_MODE_SECONDS = 5 * 60;
+const DEFUALT_POMODORO_SECONDS = 25 * 1;
+const DEFAULT_BREAK_MODE_SECONDS = 5 * 1;
 
 const PomodoroTimer = ({
   dailyPomodoros,
@@ -26,19 +26,22 @@ const PomodoroTimer = ({
     if (!mode === 'break') {
       setMode('focus');
     }
-  }, [pomodoroTask, mode]);
+  }, [mode]);
+
+  useEffect(() => {
+    if (pomodoroTask) {
+      setMode('focus');
+    }
+  }, [pomodoroTask]);
 
   useEffect(() => {
     let id;
-    debugger;
     if (mode === 'focus' || mode === 'break') {
-      debugger;
       id = setInterval(() => {
         if (timeRemaining) {
           setTimeRemaining((prevTime) => prevTime - 1);
         }
       }, 1000);
-      console.log('time remaining => ', timeRemaining);
       if (timeRemaining === 0) {
         if (mode === 'focus') {
           handleStoredPomodoros(dailyPomodoros + 1);

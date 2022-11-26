@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-
-const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask }) => {
-  const [formData, setFormData] = useState({ title: '', description: '', estimatedPomodoros: 1, category: 'general' });
-  const [show, setShow] = useState(false);
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css';
+const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask, show, setShow }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    estimatedPomodoros: 1,
+    category: 'general',
+    date: new Date(),
+  });
 
   useEffect(() => {
     if (selectedTask) {
@@ -11,6 +18,7 @@ const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask }) => 
         title: selectedTask.title,
         description: selectedTask.description,
         category: selectedTask.category,
+        date: selectedTask.date ? new Date(selectedTask.date) : new Date(),
       });
     }
   }, [selectedTask]);
@@ -19,9 +27,7 @@ const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask }) => 
   };
 
   const onSubmit = (e) => {
-    debugger;
     e.preventDefault();
-    console.log('form data to submit => ', formData);
 
     if (selectedTask) {
       updateTask.mutate({ ...formData, id: selectedTask?._id });
@@ -40,7 +46,7 @@ const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask }) => 
 
   return (
     <section className='add-task'>
-      {show ? (
+      {show && (
         <form onSubmit={onSubmit} className='form task-form'>
           <div className='form-group'>
             <label for='title'>Task</label>
@@ -84,10 +90,24 @@ const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask }) => 
               name='category'
               value={formData.category}
               onChange={onChange}
-              disabled={true}
             >
-              <option value='general'>General</option>
+              <option value='chores'>Chores</option>
+              <option value='work'>Work</option>
+              <option value='coding'>Coding</option>
+              <option value='teaching'>Teaching</option>
+              <option value='financial'>Financial</option>
+              <option value='miscellaneous'>Miscellaneous</option>
             </select>
+          </div>
+          <div className='form-group'>
+            <label for='date'>Date</label>
+            <DatePicker
+              selected={formData.date}
+              name={'date'}
+              onChange={(date, e) => {
+                setFormData((prevState) => ({ ...prevState, date: date }));
+              }}
+            />
           </div>
           <div className='form-group'>
             <button type='submit' className='btn btn-primary'>
@@ -106,10 +126,6 @@ const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask }) => 
             </button>
           </div>
         </form>
-      ) : (
-        <button className='btn btn-add-task btn-icon' onClick={() => setShow(true)}>
-          +
-        </button>
       )}
     </section>
   );

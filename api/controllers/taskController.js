@@ -8,7 +8,6 @@ const User = require('../models/userModel');
 // /api/tasks
 const getTasks = asyncHandler(async (req, res) => {
   const tasks = await Task.find({ user: req.user.id });
-  console.log('all tasks => ', tasks);
 
   res.status(200).json({
     tasks,
@@ -28,6 +27,7 @@ const createTask = asyncHandler(async (req, res) => {
     title: req.body.title,
     description: req.body.description,
     category: req.body.category,
+    date: req.body.date,
     estimatedPomodoros: req.body.estimatedPomodoros,
     completedPomodoros: req.body.completedPomodoros,
   });
@@ -42,7 +42,6 @@ const updateTask = asyncHandler(async (req, res) => {
     const task = await Task.findById(req.params.id);
     const allTasks = await Task.find({ user: req.user.id });
 
-    console.log('req,body for update, mark complete => ', req.body);
     if (!task) {
       res.status(400);
       throw new Error('Task not found.');
@@ -64,12 +63,10 @@ const updateTask = asyncHandler(async (req, res) => {
 
     const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-    console.log('updatedTask => ', updateTask);
-    console.log('allTasks => ', allTasks);
     const updatedTasks = allTasks.map((task) =>
       task._id.toString() === updatedTask?._id.toString() ? updatedTask : task
     );
-    console.log('updatedTask => ', updatedTask);
+
     res.status(200).json(updatedTasks);
   } catch (error) {
     console.error('Error updating task => ', error);

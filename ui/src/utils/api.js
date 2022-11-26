@@ -13,7 +13,7 @@ export const useFetch = (key, endpoint, options, token) => {
     queryKey: [key],
     queryFn: async () => {
       let res = await axios.get(endpoint, getConfig(token));
-      console.log('data');
+
       return res;
     },
     ...options,

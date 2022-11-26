@@ -3,7 +3,6 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 const PomodoroChart = ({ chartData }) => {
-  console.log('chartData => ', chartData);
   const options = {
     chart: {
       type: 'column',
