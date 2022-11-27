@@ -31,9 +31,6 @@ const updatePomodoros = asyncHandler(async (req, res) => {
   try {
     const pomodoroRecord = await Pomodoro.findById(req.body.id);
 
-    console.log('pomodoroRecord => ', pomodoroRecord);
-
-    console.log('req.body for pom update => ', req.body);
     if (!pomodoroRecord) {
       res.status(400);
       throw new Error('Pomodoro record not found.');

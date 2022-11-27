@@ -7,7 +7,6 @@ const { default: mongoose } = require('mongoose');
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  console.log({ name, email, password });
 
   // Verify all required fields present
   if (!name || !email || !password) {

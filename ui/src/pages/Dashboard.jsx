@@ -93,8 +93,6 @@ const Dashboard = () => {
   );
 
   const updatePomodoroCount = useMutation(async (dailyPomodoros) => {
-    console.log('pomorodoRecord => ', pomodoroRecord);
-    debugger;
     return await axios.put(
       `https://productivity-app-api.onrender.com/api/pomodoros/`,
       {
