@@ -14,13 +14,15 @@ import PomodoroChart from '../components/layouts/PomodoroChart';
 import { useMemo } from 'react';
 import OverviewRadialCharts from '../components/OverviewRadialCharts';
 
+const DEFUALT_POMODORO_SECONDS = 25 * 60;
+
 const Dashboard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [dailyPomodoros, setDailyPomodoros] = useState(0);
   const [pomodoroRecord, setPomodoroRecord] = useState(null);
   const [pomodoroTask, setPomodoroTask] = useState(null);
   const [filterCategory, setFilterCategory] = useState('all');
-  const [filterDate, setFilterDate] = useState('all');
+  const [filterDate, setFilterDate] = useState('today');
   const [showFilters, setShowFilters] = useState(false);
   const [showTaskForm, setShowTaskForm] = useState(false);
 
@@ -143,7 +145,7 @@ const Dashboard = () => {
       }
 
       if (filterDate !== 'all') {
-        return tasks.filter((task) => {
+        return tasks?.filter((task) => {
           let date = new Date();
           if (filterDate === 'today') {
             return moment(task.date).isSame(date, 'day');
@@ -168,13 +170,45 @@ const Dashboard = () => {
     return <Spinner />;
   }
 
+  let todaysStats = tasks
+    ?.filter((task) => moment(task.date).isSame(new Date(), 'day'))
+
+    ?.reduce(
+      (acc, current) => {
+        return {
+          estimatedPomodoros: current.estimatedPomodoros + acc.estimatedPomodoros,
+          completedPomodoros: current.completedPomodoros + acc.completedPomodoros,
+          taskCount: acc.taskCount + 1,
+          completedTaskCount: current.completed ? acc.completedTaskCount + 1 : acc.completedTaskCount,
+        };
+      },
+      { estimatedPomodoros: 0, completedPomodoros: 0, taskCount: 0, completedTaskCount: 0 }
+    );
+
   return (
     <>
       <div className='dashboard'>
         <div className='dashboard-left'>
           <h3 className='date subheading'>{moment().format('LLLL').split(', 2022')[0]}</h3>
-          {/* Radial Stats Charts */}
-          {/* <OverviewRadialCharts pomodoroData={data} taskData={tasks} /> */}
+          <div className='overview-stats'>
+            <div className='stats-card'>
+              <span className='stat-value'>
+                {pomodoroRecord?.count ?? 0}/{todaysStats?.estimatedPomodoros}
+              </span>
+              <span className='stat-subheading'>Pomodoros Completed</span>
+            </div>
+            <div className='stats-card'>
+              <span className='stat-value'>
+                {todaysStats.completedTaskCount}/{todaysStats.taskCount}
+              </span>
+              <span className='stat-subheading'>Tasks Completed</span>
+            </div>
+            <div className='stats-card'>
+              <span className='stat-value'>{(pomodoroRecord?.count * DEFUALT_POMODORO_SECONDS) / 60}m</span>
+              <span className='stat-subheading'>Focus Time</span>
+            </div>
+          </div>
+
           {/* Productivity Chart */}
           <PomodoroChart chartData={data} />
         </div>
@@ -194,58 +228,14 @@ const Dashboard = () => {
           <h2 className='subheading text-left'>Tasks</h2>
           <div style={{ display: 'flex' }}>
             <button className='btn btn-icon' onClick={() => setShowFilters(!showFilters)}>
-              <i className='fa fa-filter'></i>
+              <i className={`fa fa-${showFilters ? 'ban' : 'filter'}`}></i>
             </button>
             <button className='btn btn-icon' onClick={() => setShowTaskForm(!showTaskForm)}>
               <i className={`fa fa-${showTaskForm ? 'close' : 'add'}`} />
             </button>
           </div>
         </div>
-        {showFilters && (
-          <div style={{ display: 'flex' }}>
-            <div className='form-group' style={{ width: '160px', margin: 'auto', textAlign: 'center' }}>
-              <label style={{ textAlign: 'center' }} for='category'>
-                Filter by Category
-              </label>
-              <select
-                type='text'
-                style={{ margin: 'auto' }}
-                className='form-control'
-                id='category'
-                name='category'
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-              >
-                <option value='all'>All Categories</option>
-                <option value='chores'>Chores</option>
-                <option value='work'>Work</option>
-                <option value='coding'>Coding</option>
-                <option value='teaching'>Teaching</option>
-                <option value='financial'>Financial</option>
-                <option value='miscellaneous'>Miscellaneous</option>
-              </select>
-            </div>
-            <div className='form-group' style={{ width: '160px', margin: 'auto', textAlign: 'center' }}>
-              <label style={{ textAlign: 'center' }} for='date'>
-                Filter by Date
-              </label>
-              <select
-                type='text'
-                style={{ margin: 'auto' }}
-                className='form-control'
-                id='date'
-                name='date'
-                value={filterDate}
-                onChange={(e) => setFilterDate(e.target.value)}
-              >
-                <option value='all'>All</option>
-                <option value='today'>Today</option>
-                <option value='tomorrow'>Tomorrow</option>
-                <option value='week'>This Week</option>
-              </select>
-            </div>
-          </div>
-        )}
+
         {/* Task Form: Convert to Modal */}
         <TaskForm
           selectedTask={selectedTask}
@@ -258,6 +248,46 @@ const Dashboard = () => {
         <div className='tasks-table'>
           {/* Tasks Overview */}
           <TaskTableHeader />
+          {showFilters && (
+            <div className='filter-row'>
+              <div />
+              <div style={{ display: 'flex' }}>
+                <select
+                  type='text'
+                  style={{ marginRight: 'auto' }}
+                  className='form-control'
+                  id='date'
+                  name='date'
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                >
+                  <option value='all'>All</option>
+                  <option value='today'>Today</option>
+                  <option value='tomorrow'>Tomorrow</option>
+                  <option value='week'>This Week</option>
+                </select>
+              </div>
+              <div className='form-group' style={{ width: '160px', margin: 'auto', textAlign: 'center' }}>
+                <select
+                  type='text'
+                  style={{ margin: 'auto' }}
+                  className='form-control'
+                  id='category'
+                  name='category'
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                >
+                  <option value='all'>All Categories</option>
+                  <option value='chores'>Chores</option>
+                  <option value='work'>Work</option>
+                  <option value='coding'>Coding</option>
+                  <option value='teaching'>Teaching</option>
+                  <option value='financial'>Financial</option>
+                  <option value='miscellaneous'>Miscellaneous</option>
+                </select>
+              </div>
+            </div>
+          )}
           {tasks?.length ? (
             tableData.map((task) => (
               <TaskItem

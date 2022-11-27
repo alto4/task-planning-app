@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 // Default timer to standard intervals of 25m focus/5m break
-const DEFUALT_POMODORO_SECONDS = 25 * 1;
-const DEFAULT_BREAK_MODE_SECONDS = 5 * 1;
+const DEFUALT_POMODORO_SECONDS = 25 * 60;
+const DEFAULT_BREAK_MODE_SECONDS = 5 * 60;
 
 const PomodoroTimer = ({
   dailyPomodoros,
@@ -62,6 +62,7 @@ const PomodoroTimer = ({
   return (
     <div>
       <h2 className='subheading'>Pomodoro Timer</h2>
+
       <p>{dailyPomodoros} Completed Today</p>
 
       <span>
@@ -72,7 +73,18 @@ const PomodoroTimer = ({
             {timeRemaining % 60}
           </div>
         </>
-        <span className='subheading'>{timeRemaining && mode === 'focus' ? 'Time to Focus' : 'Break Time'}</span>
+        <span className='subheading'>{timeRemaining && mode === 'focus' ? 'Focus On' : 'Break Time'}</span>
+        {pomodoroTask && (
+          <div className='current-task-overview'>
+            <h3 style={{ margin: '.5rem' }}>
+              {' '}
+              {pomodoroTask?.title}{' '}
+              <span>
+                ({pomodoroTask?.completedPomodoros}/{pomodoroTask?.estimatedPomodoros})
+              </span>
+            </h3>
+          </div>
+        )}
       </span>
       <div className='pomodoro-buttons'>
         {mode === 'focus' ? (

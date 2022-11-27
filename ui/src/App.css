@@ -151,10 +151,12 @@ body {
   margin: 2rem 0 2rem ;
   position: relative;
   padding: 2rem; 
+  margin-top: -20px;
 }
 
 .tasks-table {
   margin-left: -2rem;
+  min-height: 80vh;
 }
 
 .btn-add-task {
@@ -173,13 +175,18 @@ body {
   text-align: center;
 }
 
-.task-row {
+.task-row,
+.filter-row {
   display: grid;
   grid-template-columns: 1fr 4fr 1fr 2fr 1fr 1fr;
   align-items: center;
   width: 100%;
   margin: auto;
   padding: .7rem 0;
+}
+
+.filter-row {
+  margin-top: -25px;
 }
 
 .table-header {
@@ -264,4 +271,81 @@ input[type=checkbox] {
   margin: 2rem auto;
   font-size: 2.5rem;
   letter-spacing: 2px;
+}
+
+/* Modal Styles */
+/* .modal-background {
+  display: none; 
+  position: fixed; 
+  z-index: 1; 
+  left: 0;
+  top: 0;
+  width: 10vw; 
+  height: 10vh;
+  overflow: auto; 
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4);
+} */
+
+.modal-content {
+  background: #16151A;
+  padding: 2rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #888;
+  width: 500px; 
+  border-radius: 15px;
+}
+
+.form-header .btn-icon {
+  position: absolute;
+  right: 5px;
+  background: #16151A;
+  color: #FFF;
+  top: 5px;
+}
+
+.overview-stats {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  align-items: center;
+  grid-gap: 3.5rem;
+  margin: 10px 0 50px;
+}
+
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border: 1px solid #222;
+  border-radius: 1rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 0 1rem 1rem;
+}
+
+.stat-subheading {
+  font-size: .8rem;
+}
+
+.current-task-overview {
+  padding: 0 2rem;
+}
+
+.current-task-overview h3 {
+  padding-top: .5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.current-task-overview h3 span {
+  font-size: .7rem;
 }
