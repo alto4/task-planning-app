@@ -57,6 +57,7 @@ const PomodoroTimer = ({
       clearInterval(id);
     }
     return () => clearInterval(id);
+    // eslint-disable-next-line
   }, [timeRemaining, mode, setDailyPomodoros]);
 
   return (

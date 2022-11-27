@@ -1,4 +1,3 @@
-import { chart } from 'highcharts';
 import React from 'react';
 
 const toPropercase = (text) => {

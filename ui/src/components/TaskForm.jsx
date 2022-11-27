@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask, show, setShow }) => {
   const [formData, setFormData] = useState({
@@ -22,7 +21,7 @@ const TaskForm = ({ selectedTask, setSelectedTask, createTask, updateTask, show,
       });
       setShow(true);
     }
-  }, [selectedTask]);
+  }, [selectedTask, setShow]);
   const onChange = (e) => {
     setFormData((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
   };

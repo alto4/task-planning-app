@@ -5,14 +5,13 @@ import TaskForm from '../components/TaskForm';
 import Spinner from '../components/layouts/Spinner';
 import TaskItem, { TaskTableHeader } from '../components/TaskItem';
 import PomodoroTimer from '../components/PomodoroTimer';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useFetch, API_CONFIG, getConfig } from '../utils/api';
+import { useFetch, getConfig } from '../utils/api';
 import moment from 'moment';
 
 import PomodoroChart from '../components/layouts/PomodoroChart';
 import { useMemo } from 'react';
-import OverviewRadialCharts from '../components/OverviewRadialCharts';
 
 const DEFUALT_POMODORO_SECONDS = 25 * 60;
 
@@ -35,7 +34,7 @@ const Dashboard = () => {
 
   const { data, isLoading: isPomodoroDataLoading } = useFetch(
     ['pomodoroLogs', dailyPomodoros],
-    'http://localhost:8000/api/pomodoros',
+    'https://productivity-app-api.onrender.com/api/pomodoros',
     {
       onSuccess: (res) => {
         let todaysPomodoroRecord = res.data.pomodoros?.find(
@@ -53,7 +52,7 @@ const Dashboard = () => {
 
   const { data: tasks, isLoading: isTaskDataLoading } = useFetch(
     ['tasks'],
-    'http://localhost:8000/api/tasks',
+    'https://productivity-app-api.onrender.com/api/tasks',
     {
       select: (res) => res.data?.tasks,
       enabled: !!user?.token,
@@ -64,7 +63,7 @@ const Dashboard = () => {
 
   const createTask = useMutation(
     async (taskData) => {
-      await axios.post(`http://localhost:8000/api/tasks/`, taskData, getConfig(user.token));
+      await axios.post(`https://productivity-app-api.onrender.com/api/tasks/`, taskData, getConfig(user.token));
     },
     {
       onSuccess: () => queryClient.invalidateQueries(),
@@ -73,7 +72,11 @@ const Dashboard = () => {
 
   const updateTask = useMutation(
     async (taskData) => {
-      return await axios.put(`http://localhost:8000/api/tasks/${taskData.id}`, taskData, getConfig(user.token));
+      return await axios.put(
+        `https://productivity-app-api.onrender.com/api/tasks/${taskData.id}`,
+        taskData,
+        getConfig(user.token)
+      );
     },
     {
       onSuccess: () => queryClient.invalidateQueries(),
@@ -82,7 +85,7 @@ const Dashboard = () => {
 
   const deleteTask = useMutation(
     async (id) => {
-      return await axios.delete(`http://localhost:8000/api/tasks/${id}`, getConfig(user.token));
+      return await axios.delete(`https://productivity-app-api.onrender.com/api/tasks/${id}`, getConfig(user.token));
     },
     {
       onSuccess: () => queryClient.invalidateQueries(),
@@ -93,7 +96,7 @@ const Dashboard = () => {
     console.log('pomorodoRecord => ', pomodoroRecord);
     debugger;
     return await axios.put(
-      `http://localhost:8000/api/pomodoros/`,
+      `https://productivity-app-api.onrender.com/api/pomodoros/`,
       {
         count: dailyPomodoros,
         id: pomodoroRecord._id.toString(),
@@ -104,7 +107,7 @@ const Dashboard = () => {
 
   const createPomodoroRecord = useMutation(async (dailyPomodoros) => {
     return await axios.post(
-      `http://localhost:8000/api/pomodoros/`,
+      `https://productivity-app-api.onrender.com/api/pomodoros/`,
       {
         count: dailyPomodoros,
         date: new Date().toISOString().slice(0, 10),
@@ -156,6 +159,7 @@ const Dashboard = () => {
           if (filterDate === 'week') {
             return moment(task.date).isSame(new Date(), 'week');
           }
+          return [];
         });
       }
     };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { userSelector, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Spinner from '../components/layouts/Spinner';
@@ -27,6 +27,7 @@ const Login = () => {
     }
 
     dispatch(reset());
+    // eslint-disable-next-line
   }, [user, isError, isLoading, isSuccess, navigate, dispatch]);
 
   const onChange = (e) => {

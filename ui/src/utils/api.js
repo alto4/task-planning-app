@@ -1,5 +1,5 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { useSelector, useDispatch } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
+
 import axios from 'axios';
 
 export const getConfig = (token) => ({
